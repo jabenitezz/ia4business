@@ -1,16 +1,16 @@
 # Inteligencia Artificial Aplicada a Negocios y Empresas
-# Parte 1 - Optimización de los flujos de trabajo en un almacen con Q-Learning
+# Parte 1 - Optimizaciï¿½n de los flujos de trabajo en un almacen con Q-Learning
 
-# Importación de las librerí­as
+# Importaciï¿½n de las librerï¿½ï¿½as
 import numpy as np
 
-# Configuración de los parámetros gamma y alpha para el algoritmo de Q-Learning
+# Configuraciï¿½n de los parï¿½metros gamma y alpha para el algoritmo de Q-Learning
 gamma = 0.75
 alpha = 0.9
 
-# PARTE 1 - DEFINICIÓN DEL ENTORNO
+# PARTE 1 - DEFINICIï¿½N DEL ENTORNO
 
-# Definición de los estados
+# Definiciï¿½n de los estados
 location_to_state = {'A': 0,
                      'B': 1,
                      'C': 2,
@@ -24,10 +24,10 @@ location_to_state = {'A': 0,
                      'K': 10,
                      'L': 11}
 
-# Definición de las acciones
+# Definiciï¿½n de las acciones
 actions = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
 
-# Definición de las recompensas
+# Definiciï¿½n de las recompensas
 # Columnas:    A,B,C,D,E,F,G,H,I,J,K,L
 R = np.array([[0,1,0,0,0,0,0,0,0,0,0,0], # A
               [1,0,1,0,0,1,0,0,0,0,0,0], # B
@@ -42,12 +42,12 @@ R = np.array([[0,1,0,0,0,0,0,0,0,0,0,0], # A
               [0,0,0,0,0,0,0,0,0,1,0,1], # K
               [0,0,0,0,0,0,0,1,0,0,1,0]])# L
 
-# PARTE 2 - CONSTRUCCIóN DE LA SOLUCIÓN DE IA CON Q-LEARNING
+# PARTE 2 - CONSTRUCCIï¿½N DE LA SOLUCIï¿½N DE IA CON Q-LEARNING
 
-# Transformación inversa de estados a ubicaciones
+# Transformaciï¿½n inversa de estados a ubicaciones
 state_to_location = {state : location for location, state in location_to_state.items()}
 
-# Crear la función final que nos devuelva la ruta óptima
+# Crear la funciï¿½n final que nos devuelva la ruta ï¿½ptima
 def route(starting_location, ending_location):
     R_new = np.copy(R)
     ending_state = location_to_state[ending_location]
@@ -77,8 +77,63 @@ def route(starting_location, ending_location):
         starting_location = next_location
     return route
 
-# PARTE 3 - PONER EL MODELO EN PRODUCCIÓN
+
+
+
+
+
+
+def route_intermediary(starting_location, intermediary_location, ending_location):
+    R_new = np.copy(R)
+    ending_state = location_to_state[ending_location]
+    R_new[ending_state, ending_state] = 1000
+    
+    intermediary_state = location_to_state[intermediary_location]
+    
+    R_new[intermediary_state, intermediary_state] = 500
+
+    Q = np.array(np.zeros([12, 12]))
+    for i in range(1000):
+        current_state = np.random.randint(0, 12)
+        playable_actions = []
+        for j in range(12):
+            if R_new[current_state, j] > 0:
+                playable_actions.append(j)
+        next_state = np.random.choice(playable_actions)
+        TD = R_new[current_state, next_state] + gamma*Q[next_state, np.argmax(Q[next_state,])] - Q[current_state, next_state]
+        Q[current_state, next_state] = Q[current_state, next_state] + alpha*TD
+
+    
+    
+    route = [starting_location]
+    next_location = starting_location
+    while(next_location != ending_location):
+        starting_state = location_to_state[starting_location]
+        next_state = np.argmax(Q[starting_state, ])
+        next_location = state_to_location[next_state]
+        route.append(next_location)
+        starting_location = next_location
+    return route
+
+
+
+
+
+
+
+
+
+
+
+ruta=route_intermediary('E', 'B', 'G')
+print("Ruta Elegida:")
+print(ruta)
+
+
+
+# PARTE 3 - PONER EL MODELO EN PRODUCCIï¿½N
 def best_route(starting_location, intermediary_location, ending_location):
+    #Se quita el primer punto porque el punto intermedio se repite por eso se quita en la segunda.
     return route(starting_location, intermediary_location) + route(intermediary_location, ending_location)[1:]
 
 # Imprimir la ruta final
