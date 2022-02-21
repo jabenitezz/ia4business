@@ -51,6 +51,8 @@ early_stopping = True
 patience = 10
 best_total_reward = -np.inf
 patience_count = 0
+last_loss=0
+loss_reduce=0.01
 if (env.train):
     # INICIAR EL BUCLE DE TODAS LAS ÉPOCAS (1 Epoch = 5 Meses)
     for epoch in range(1, number_epochs):
@@ -104,7 +106,7 @@ if (env.train):
             loss += model.train_on_batch(inputs, targets)
             timestep += 1
             current_state = next_state
-            
+        last_loss=loss    
         # IMPRIMIR LOS RESULTADOS DEL ENTRENAMIENTO AL FINAL DEL EPOCH
         print("\n")
         print("Epoch: {:03d}/{:03d}.".format(epoch, number_epochs))
@@ -113,10 +115,9 @@ if (env.train):
         
         # DETENCIÓN TEMPRANA
         if early_stopping:
-            if (total_reward <= best_total_reward):
+            if ((last_loss-loss)/loss)<loss_reduce:
                 patience_count += 1
             else:
-                best_total_reward = total_reward
                 patience_count = 0
                 
             if patience_count >= patience:

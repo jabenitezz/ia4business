@@ -31,8 +31,11 @@ train = False
 # EJECUCIÓN DE UN AÑO DE SIMULACIÓN EN MODO INFERENCIA
 env.train = train
 current_state, _, _ = env.observe()
+#Vamos a hacer la simulación de un año completo (minuto a minuto)
 for timestep in range(0, 12*30*24*60):
+    #predecimos con el modelo el valor de q
     q_values = model.predict(current_state)
+    #Y nos quedamos con la mejor acción
     action = np.argmax(q_values[0])
             
     if (action < direction_boundary):
@@ -40,6 +43,7 @@ for timestep in range(0, 12*30*24*60):
     else:
         direction = 1
     energy_ai = abs(action - direction_boundary) * temperature_step
+    #Actualizamos el entorno
     next_state, reward, game_over = env.update_env(direction, energy_ai, int(timestep/(30*24*60)))
     current_state = next_state
 
