@@ -68,6 +68,8 @@ absolute_return = (total_reward_ts - total_reward_rs)*100
 relative_return = (total_reward_ts - total_reward_rs) / total_reward_rs * 100
 print("Rendimiento Absoluto: {:.0f} $".format(absolute_return))
 print("Rendimiento Relativo: {:.0f} %".format(relative_return))
+
+
     
 # Representación del histograma de selecciones
 # Plotting the Regret Curve

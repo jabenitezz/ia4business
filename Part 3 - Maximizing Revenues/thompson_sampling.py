@@ -77,6 +77,8 @@ for n in range(0, N):
     strategies_selected_ts.append(strategy_ts)
     total_reward_ts += reward_ts
     
+
+
 # Calcular le retorno relativo y absoluto. 
 #Suponemos que cada suscripcion se vende a 100 dolares
 absolute_return = (total_reward_ts - total_reward_rs)*100
